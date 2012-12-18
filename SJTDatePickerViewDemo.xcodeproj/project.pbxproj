@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D3889CD4166F8A3500081F85 /* SJTDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = D3889CD3166F8A3400081F85 /* SJTDatePickerView.m */; };
 		D3FA2748166E2FC20035749D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3FA2747166E2FC20035749D /* UIKit.framework */; };
 		D3FA274A166E2FC20035749D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3FA2749166E2FC20035749D /* Foundation.framework */; };
 		D3FA274C166E2FC20035749D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3FA274B166E2FC20035749D /* CoreGraphics.framework */; };
@@ -37,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D3889CD2166F8A3400081F85 /* SJTDatePickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJTDatePickerView.h; sourceTree = "<group>"; };
+		D3889CD3166F8A3400081F85 /* SJTDatePickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJTDatePickerView.m; sourceTree = "<group>"; };
 		D3FA2743166E2FC20035749D /* SJTDatePickerViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SJTDatePickerViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FA2747166E2FC20035749D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D3FA2749166E2FC20035749D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -119,6 +122,8 @@
 		D3FA274D166E2FC20035749D /* SJTDatePickerViewDemo */ = {
 			isa = PBXGroup;
 			children = (
+				D3889CD2166F8A3400081F85 /* SJTDatePickerView.h */,
+				D3889CD3166F8A3400081F85 /* SJTDatePickerView.m */,
 				D3FA2756166E2FC20035749D /* SJTAppDelegate.h */,
 				D3FA2757166E2FC20035749D /* SJTAppDelegate.m */,
 				D3FA275F166E2FC30035749D /* MainStoryboard_iPhone.storyboard */,
@@ -210,7 +215,7 @@
 			attributes = {
 				CLASSPREFIX = SJT;
 				LastUpgradeCheck = 0450;
-				ORGANIZATIONNAME = "解 磊";
+				ORGANIZATIONNAME = SJT;
 			};
 			buildConfigurationList = D3FA273D166E2FC20035749D /* Build configuration list for PBXProject "SJTDatePickerViewDemo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -278,6 +283,7 @@
 				D3FA2754166E2FC20035749D /* main.m in Sources */,
 				D3FA2758166E2FC20035749D /* SJTAppDelegate.m in Sources */,
 				D3FA2767166E2FC30035749D /* SJTViewController.m in Sources */,
+				D3889CD4166F8A3500081F85 /* SJTDatePickerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +364,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -393,6 +399,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SJTDatePickerViewDemo/SJTDatePickerViewDemo-Prefix.pch";
 				INFOPLIST_FILE = "SJTDatePickerViewDemo/SJTDatePickerViewDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -404,6 +411,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SJTDatePickerViewDemo/SJTDatePickerViewDemo-Prefix.pch";
 				INFOPLIST_FILE = "SJTDatePickerViewDemo/SJTDatePickerViewDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -462,6 +470,7 @@
 				D3FA2781166E2FC30035749D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D3FA2782166E2FC30035749D /* Build configuration list for PBXNativeTarget "SJTDatePickerViewDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -470,6 +479,7 @@
 				D3FA2784166E2FC30035749D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
