@@ -23,19 +23,22 @@
 
 
 @interface SJTViewController ()
-@property (strong, nonatomic) UIStepper *stepper;
-@property (strong, nonatomic) UILabel *label;
+@property (strong, nonatomic) UIStepper *countStepper;
+@property (strong, nonatomic) UIStepper *insetStepper;
 @property (strong, nonatomic) UISegmentedControl *segmentedControl;
 @property (strong, nonatomic) UISlider *verticalSlider;
 @property (strong, nonatomic) UISlider *horizontalSlider;
 @property (strong, nonatomic) UIView *globalView;
 @property (strong, nonatomic) UIView *localView;
+@property (strong, nonatomic) UITextView *logView;
 @property (strong, nonatomic) SJTDatePickerView *datePickerView;
-- (void)actionFromStepper;
+- (void)actionFromStepper:(UIStepper *)sender;
 - (void)actionFromSegmentedControl;
 - (void)actionFromHorizontalSlider;
 - (void)actionFromVerticalSlider;
 - (void)actionFromDatePickerView;
+- (void)adjustFrame;
+- (void)logMessage:(NSString *)message;
 @end
 
 @implementation SJTViewController
@@ -45,12 +48,13 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    self.stepper = [[UIStepper alloc] init];
-    self.stepper.minimumValue = 1;
-    [self.stepper addTarget:self action:@selector(actionFromStepper) forControlEvents:UIControlEventValueChanged];
+    self.countStepper = [[UIStepper alloc] init];
+    self.countStepper.minimumValue = 1;
+    [self.countStepper addTarget:self action:@selector(actionFromStepper:) forControlEvents:UIControlEventValueChanged];
     
-    self.label = [[UILabel alloc] init];
-    self.label.adjustsFontSizeToFitWidth = YES;
+    self.insetStepper = [[UIStepper alloc] init];
+    self.insetStepper.minimumValue = 0;
+    [self.insetStepper addTarget:self action:@selector(actionFromStepper:) forControlEvents:UIControlEventValueChanged];
     
     self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"年",@"月",@"日",@"時",@"分"]];
     [self.segmentedControl addTarget:self action:@selector(actionFromSegmentedControl) forControlEvents:UIControlEventValueChanged];
@@ -71,18 +75,22 @@
     self.localView.backgroundColor = [UIColor lightGrayColor];
     self.localView.layer.borderWidth = 1;
     
+    self.logView = [[UITextView alloc] init];
+    self.logView.editable = NO;
+    
     self.datePickerView = [[SJTDatePickerView alloc] init];
     self.datePickerView.datePickerViewMode = SJTDatePickerViewModeYear;
     self.datePickerView.unitCount = 1;
     [self.datePickerView addTarget:self action:@selector(actionFromDatePickerView) forControlEvents:UIControlEventValueChanged];
 
-    [self.view addSubview:self.stepper];
-    [self.view addSubview:self.label];
+    [self.view addSubview:self.countStepper];
+    [self.view addSubview:self.insetStepper];
     [self.view addSubview:self.segmentedControl];
     [self.view addSubview:self.horizontalSlider];
     [self.view addSubview:self.verticalSlider];
     [self.view addSubview:self.globalView];
     [self.globalView addSubview:self.localView];
+    [self.globalView addSubview:self.logView];
     [self.localView addSubview:self.datePickerView];
 }
 
@@ -97,22 +105,19 @@
 }
 
 - (void)viewWillLayoutSubviews {
-    CGRect stepperFrame = self.stepper.bounds;
-    stepperFrame.origin = CGPointMake(5, 5);
+    CGRect countStepperFrame = self.countStepper.bounds;
+    countStepperFrame.origin = CGPointMake(5, 5);
+    
+    CGRect insetStepperFrame = self.insetStepper.bounds;
+    insetStepperFrame.origin = CGPointMake(5, CGRectGetMaxY(countStepperFrame)+2);
     
     CGRect segmentedControlFrame = self.segmentedControl.bounds;
-    segmentedControlFrame.origin.x = 5+CGRectGetMaxX(stepperFrame);
-    segmentedControlFrame.origin.y = 5;
-    
-    CGRect labelFrame;
-    labelFrame.origin.x = 5;
-    labelFrame.origin.y = CGRectGetMaxY(stepperFrame)+5;
-    labelFrame.size.width = stepperFrame.size.width;
-    labelFrame.size.height = segmentedControlFrame.size.height-stepperFrame.size.height;
+    segmentedControlFrame.origin.x = 5+CGRectGetMaxX(countStepperFrame);
+    segmentedControlFrame.origin.y = (CGRectGetMinY(countStepperFrame)+CGRectGetMaxY(insetStepperFrame)-segmentedControlFrame.size.height)/2;
     
     CGRect horizontalSliderFrame = self.horizontalSlider.bounds;
     horizontalSliderFrame.origin.x = 5+horizontalSliderFrame.size.height;
-    horizontalSliderFrame.origin.y = CGRectGetMaxY(segmentedControlFrame)+5;
+    horizontalSliderFrame.origin.y = CGRectGetMaxY(insetStepperFrame)+5;
     horizontalSliderFrame.size.width = self.view.bounds.size.width-horizontalSliderFrame.origin.x-5;
     
     CGRect verticalSliderFrame = horizontalSliderFrame;
@@ -127,24 +132,26 @@
     globalViewFrame.size.height = verticalSliderFrame.size.width;
     globalViewFrame = CGRectInset(globalViewFrame, 10, 10);
     
-    CGRect localViewFrame = CGRectZero;
-    localViewFrame.size.width = globalViewFrame.size.width*self.horizontalSlider.value;
-    localViewFrame.size.height = globalViewFrame.size.height*self.verticalSlider.value;
-    
-    self.stepper.frame = stepperFrame;
-    self.label.frame = labelFrame;
+    self.countStepper.frame = countStepperFrame;
+    self.insetStepper.frame = insetStepperFrame;
     self.segmentedControl.frame = segmentedControlFrame;
     self.horizontalSlider.frame = horizontalSliderFrame;
     self.verticalSlider.transform = CGAffineTransformIdentity;
     self.verticalSlider.frame = verticalSliderFrame;
     self.verticalSlider.transform = CGAffineTransformMakeRotation(M_PI*0.5);
     self.globalView.frame = globalViewFrame;
-    self.localView.frame = localViewFrame;
-    self.datePickerView.frame = self.localView.bounds;
+    
+    [self adjustFrame];
 }
 
-- (void)actionFromStepper {
-    self.datePickerView.unitCount = self.stepper.value;
+- (void)actionFromStepper:(UIStepper *)sender {
+    if (sender==self.countStepper) {
+        self.datePickerView.unitCount = self.countStepper.value;
+        [self logMessage:[NSString stringWithFormat:@"UnitCount:%d", (NSInteger)self.countStepper.value]];
+    } else {
+        self.datePickerView.frame = CGRectInset(self.localView.bounds, self.insetStepper.value, self.insetStepper.value);
+        [self logMessage:[NSString stringWithFormat:@"RectInset:%d", (NSInteger)self.insetStepper.value]];
+    }
 }
 
 - (void)actionFromSegmentedControl {
@@ -169,23 +176,11 @@
 }
 
 - (void)actionFromHorizontalSlider {
-    CGRect localViewFrame = self.localView.frame;
-    localViewFrame.size.width = self.globalView.bounds.size.width*self.horizontalSlider.value;
-    self.localView.frame = localViewFrame;
-    self.datePickerView.frame = self.localView.bounds;
-    
-    NSLog(@"ParentView:%@", NSStringFromCGRect(localViewFrame));
-    NSLog(@"DatePickerView:%@", NSStringFromCGRect(self.datePickerView.frame));
+    [self adjustFrame];
 }
 
 - (void)actionFromVerticalSlider {
-    CGRect localViewFrame = self.localView.frame;
-    localViewFrame.size.height = self.globalView.bounds.size.height*self.verticalSlider.value;
-    self.localView.frame = localViewFrame;
-    self.datePickerView.frame = self.localView.bounds;
-    
-    NSLog(@"ParentView:%@", NSStringFromCGRect(localViewFrame));
-    NSLog(@"DatePickerView:%@", NSStringFromCGRect(self.datePickerView.frame));
+    [self adjustFrame];
 }
 
 - (void)actionFromDatePickerView {
@@ -193,7 +188,62 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.calendar = [NSCalendar currentCalendar];
     dateFormatter.dateFormat = @"yyyy/MM/dd HH:mm:ss";
-    self.label.text = [dateFormatter stringFromDate:date];
+    
+    [self logMessage:[NSString stringWithFormat:@"DatePickerDate:%@", [dateFormatter stringFromDate:date]]];
+}
+
+- (void)adjustFrame {
+    CGRect globalViewFrame = self.globalView.frame;
+    CGRect localViewFrame = CGRectZero;
+    localViewFrame.size.width = globalViewFrame.size.width*self.horizontalSlider.value;
+    localViewFrame.size.height = globalViewFrame.size.height*self.verticalSlider.value;
+    
+    CGRect logViewFrame = CGRectZero;
+    if (globalViewFrame.size.width*(globalViewFrame.size.height-localViewFrame.size.height)>
+        globalViewFrame.size.height*(globalViewFrame.size.width-localViewFrame.size.width)) {
+        logViewFrame.origin.y = localViewFrame.size.height;
+        logViewFrame.size.width = globalViewFrame.size.width;
+        logViewFrame.size.height = globalViewFrame.size.height-localViewFrame.size.height;
+    } else {
+        logViewFrame.origin.x = localViewFrame.size.width;
+        logViewFrame.size.width = globalViewFrame.size.width-localViewFrame.size.width;
+        logViewFrame.size.height = globalViewFrame.size.height;
+    }
+    
+    self.localView.frame = localViewFrame;
+    self.logView.frame = logViewFrame;
+    self.datePickerView.frame = CGRectInset(self.localView.bounds, self.insetStepper.value, self.insetStepper.value);
+    
+    CGRect userFrame;
+    SEL sel = @selector(userFrame);
+    NSMethodSignature *methodSignature = [SJTDatePickerView instanceMethodSignatureForSelector:sel];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+    invocation.selector = sel;
+    invocation.target = self.datePickerView;
+    [invocation invoke];
+    [invocation getReturnValue:&userFrame];
+    
+    CGSize adjustedSize;
+    sel = @selector(adjustedSize);
+    methodSignature = [SJTDatePickerView instanceMethodSignatureForSelector:sel];
+    invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+    invocation.selector = sel;
+    invocation.target = self.datePickerView;
+    [invocation invoke];
+    [invocation getReturnValue:&adjustedSize];
+    
+    [self logMessage:[NSString stringWithFormat:@"Frame:%@\nBounds:%@\nUserFrame:%@\nAdjustedSize:%@",
+                      NSStringFromCGRect(self.datePickerView.frame),
+                      NSStringFromCGRect(self.datePickerView.bounds),
+                      NSStringFromCGRect(userFrame),
+                      NSStringFromCGSize(adjustedSize)]];
+}
+
+- (void)logMessage:(NSString *)message {
+    self.logView.text = [NSString stringWithFormat:@"LOG[%@]:\n%@\n\n%@",
+                         [NSDate date],
+                         message,
+                         self.logView.text];
 }
 
 @end

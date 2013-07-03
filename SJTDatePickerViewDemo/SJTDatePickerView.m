@@ -341,28 +341,28 @@ static NSString *const kMinimumDateString = @"1970年1月1日0時0分";
     
     switch ([self typeOfComponent:component]) {
         case ComponentTypeYear:
-            cellView.textAlignment = UITextAlignmentRight;
+            cellView.textAlignment = NSTextAlignmentRight;
             cellView.textColor = [self textColorOfYearCellForRow:row];
             break;
         case ComponentTypeMonth:
-            cellView.textAlignment = UITextAlignmentRight;
+            cellView.textAlignment = NSTextAlignmentRight;
             cellView.textColor = [self textColorOfMonthCellForRow:row forComponent:component];
             break;
         case ComponentTypeDay:
-            cellView.textAlignment = UITextAlignmentRight;
+            cellView.textAlignment = NSTextAlignmentRight;
             cellView.textColor = [self textColorOfDayCellForRow:row forComponent:component];
             break;
         case ComponentTypeHour:
-            cellView.textAlignment = UITextAlignmentRight;
+            cellView.textAlignment = NSTextAlignmentRight;
             cellView.textColor = [self textColorOfHourCellForRow:row forComponent:component];
             break;
         case ComponentTypeMinute:
-            cellView.textAlignment = UITextAlignmentRight;
+            cellView.textAlignment = NSTextAlignmentRight;
             cellView.textColor = [self textColorOfMinuteCellForRow:row forComponent:component];
             break;
         case ComponentTypeSeparator:
         default:
-            cellView.textAlignment = UITextAlignmentCenter;
+            cellView.textAlignment = NSTextAlignmentCenter;
             cellView.textColor = [UIColor blackColor];
             break;
     }
